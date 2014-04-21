@@ -1,21 +1,9 @@
 <?PHP
 
-	class tumblr_ingest{
+	class tumblr_ingest extends standard_ingest{
 	
 		var $link;
 		var $database;
-		
-		function tumblr_ingest(){
-		
-			include "../config.php";
-			include "../../public_html/site/database/database_layer.inc";
-			include "../../public_html/site/database/" . DB_TYPE . "_database_layer.inc";
-			$db_class = DB_TYPE . "_database_layer";
-			$this->database = new $db_class();
-		
-			$this->link = $this->database->database_connect();
-		
-		}
 
 		var $nodes_insert = array();
 		var $link_insert = array();
@@ -30,53 +18,6 @@
 		var $site_licence = "";	
 		var $site_address = "";	
 		var $counter = 0;
-		
-		function add_entry($term, $value){
-			
-			if(!in_array($value, $this->current_data)){
-				
-				if(!isset($this->current_url[$term])){
-				
-					$this->current_url[$term] = array();
-				
-				}
-				
-				array_push($this->current_data, $value);			
-				array_push($this->current_url[$term], $value);
-			
-			}
-		
-		}
-		
-		function node_insert(){
-		
-			foreach($this->current_url as $node => $list){
-			
-				foreach($list as $item){
-				
-					$item = trim($item);
-					
-					$statement = $this->database->select_query("SELECT node_id FROM node_data WHERE node_value=:value", array(":value" => utf8_encode($item)), $this->link);
-					$data = $this->database->get_all_rows($statement);					
-				
-					if(count($data)==0){
-						
-						$this->database->insert_query("insert into node_data(node_value)VALUES(:item)", array(":item" => utf8_encode($item)), $this->link);
-						$node_id = $this->database->last_insert_id($this->link);
-						
-					}else{
-											
-						$node_id = $data[0]['node_id'];
-						
-					}
-				
-					$this->term_insert($node,$node_id);
-				
-				}
-			
-			}
-		
-		}
 		
 		function term_insert($node, $node_id){
 			

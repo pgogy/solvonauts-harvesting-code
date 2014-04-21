@@ -2,8 +2,6 @@
 
 function curl_data($passed_url, $file){
 
-	echo $passed_url . "<br />";
-
 	$ch = curl_init(); 
 	
 	$useragent="Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.1) Gecko/20061204 Firefox/2.0.0.1";
@@ -32,8 +30,12 @@ function curl_data($passed_url, $file){
 		curl_setopt($ch, CURLOPT_MAXREDIRS, 10); 
 
 		$data = curl_exec($ch);
+		
+		echo "***";
+		print_r($data);
+		echo "***";
 
-		@list($header, $data) = explode("\n\n", $data, 2);
+		list($header, $data) = explode("\n\n", $data, 2);
 
 		$matches = array();
 
@@ -72,7 +74,22 @@ function curl_data($passed_url, $file){
 
 		if($http_code!=200){
 
-			echo "error code : " . $passed_url . " : " . $http_code . "\n";
+			echo "error code : " . $http_code . "\n";
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
+			curl_setopt($ch, CURLOPT_HEADER, 1); 
+			curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 20); 
+			curl_setopt($ch, CURLOPT_TIMEOUT, 50); 
+			curl_setopt($ch, CURLOPT_MAXREDIRS, 10); 
+			
+			$mysqli = mysql_connect("localhost","root","");
+			mysql_select_db("solvonauts");
+			
+			echo "update oer_site_list set feed_status = '" . $http_code . "' where site_address = '" . $passed_url . "'\n";
+			
+			mysql_query("update oer_site_list set feed_status = '" . $http_code . "' where site_address = '" . $passed_url . "'");
+			
+			
+
 
 		}else{
 

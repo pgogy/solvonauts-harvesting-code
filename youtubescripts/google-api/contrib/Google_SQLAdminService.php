@@ -53,7 +53,64 @@
      * @param string $backupConfiguration Identifier for the backup configuration. This gets generated automatically when a backup configuration is created.
      * @param array $optParams Optional parameters.
      *
-     * @o);
+     * @opt_param int maxResults Maximum number of backup runs per response.
+     * @opt_param string pageToken A previously-returned page token representing part of the larger set of results to view.
+     * @return Google_BackupRunsListResponse
+     */
+    public function listBackupRuns($project, $instance, $backupConfiguration, $optParams = array()) {
+      $params = array('project' => $project, 'instance' => $instance, 'backupConfiguration' => $backupConfiguration);
+      $params = array_merge($params, $optParams);
+      $data = $this->__call('list', array($params));
+      if ($this->useObjects()) {
+        return new Google_BackupRunsListResponse($data);
+      } else {
+        return $data;
+      }
+    }
+  }
+
+  /**
+   * The "instances" collection of methods.
+   * Typical usage is:
+   *  <code>
+   *   $sqladminService = new Google_SQLAdminService(...);
+   *   $instances = $sqladminService->instances;
+   *  </code>
+   */
+  class Google_InstancesServiceResource extends Google_ServiceResource {
+
+    /**
+     * Deletes a database instance. (instances.delete)
+     *
+     * @param string $project Project ID of the project that contains the instance to be deleted. You can find this on the project summary page of the Google APIs Console.
+     * @param string $instance Database instance ID. This does not include the project ID.
+     * @param array $optParams Optional parameters.
+     * @return Google_InstancesDeleteResponse
+     */
+    public function delete($project, $instance, $optParams = array()) {
+      $params = array('project' => $project, 'instance' => $instance);
+      $params = array_merge($params, $optParams);
+      $data = $this->__call('delete', array($params));
+      if ($this->useObjects()) {
+        return new Google_InstancesDeleteResponse($data);
+      } else {
+        return $data;
+      }
+    }
+    /**
+     * Exports data from a database instance to a Google Cloud Storage bucket as a MySQL dump file.
+     * (instances.export)
+     *
+     * @param string $project Project ID of the project that contains the instance to be exported. You can find this on the project summary page of the Google APIs Console.
+     * @param string $instance Database instance ID. This does not include the project ID.
+     * @param Google_InstancesExportRequest $postBody
+     * @param array $optParams Optional parameters.
+     * @return Google_InstancesExportResponse
+     */
+    public function export($project, $instance, Google_InstancesExportRequest $postBody, $optParams = array()) {
+      $params = array('project' => $project, 'instance' => $instance, 'postBody' => $postBody);
+      $params = array_merge($params, $optParams);
+      $data = $this->__call('export', array($params));
       if ($this->useObjects()) {
         return new Google_InstancesExportResponse($data);
       } else {

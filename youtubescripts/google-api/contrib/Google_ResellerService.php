@@ -138,7 +138,95 @@
      * @return Google_Subscription
      */
     public function changeRenewalSettings($customerId, $subscriptionId, Google_RenewalSettings $postBody, $optParams = array()) {
-      $params = array('customme by which the subscriptions should be filtered. Optional
+      $params = array('customerId' => $customerId, 'subscriptionId' => $subscriptionId, 'postBody' => $postBody);
+      $params = array_merge($params, $optParams);
+      $data = $this->__call('changeRenewalSettings', array($params));
+      if ($this->useObjects()) {
+        return new Google_Subscription($data);
+      } else {
+        return $data;
+      }
+    }
+    /**
+     * Changes the seats configuration of a subscription (subscriptions.changeSeats)
+     *
+     * @param string $customerId Id of the Customer
+     * @param string $subscriptionId Id of the subscription, which is unique for a customer
+     * @param Google_Seats $postBody
+     * @param array $optParams Optional parameters.
+     * @return Google_Subscription
+     */
+    public function changeSeats($customerId, $subscriptionId, Google_Seats $postBody, $optParams = array()) {
+      $params = array('customerId' => $customerId, 'subscriptionId' => $subscriptionId, 'postBody' => $postBody);
+      $params = array_merge($params, $optParams);
+      $data = $this->__call('changeSeats', array($params));
+      if ($this->useObjects()) {
+        return new Google_Subscription($data);
+      } else {
+        return $data;
+      }
+    }
+    /**
+     * Cancels/Downgrades a subscription. (subscriptions.delete)
+     *
+     * @param string $customerId Id of the Customer
+     * @param string $subscriptionId Id of the subscription, which is unique for a customer
+     * @param string $deletionType Whether the subscription is to be fully cancelled or downgraded
+     * @param array $optParams Optional parameters.
+     */
+    public function delete($customerId, $subscriptionId, $deletionType, $optParams = array()) {
+      $params = array('customerId' => $customerId, 'subscriptionId' => $subscriptionId, 'deletionType' => $deletionType);
+      $params = array_merge($params, $optParams);
+      $data = $this->__call('delete', array($params));
+      return $data;
+    }
+    /**
+     * Gets a subscription of the customer. (subscriptions.get)
+     *
+     * @param string $customerId Id of the Customer
+     * @param string $subscriptionId Id of the subscription, which is unique for a customer
+     * @param array $optParams Optional parameters.
+     * @return Google_Subscription
+     */
+    public function get($customerId, $subscriptionId, $optParams = array()) {
+      $params = array('customerId' => $customerId, 'subscriptionId' => $subscriptionId);
+      $params = array_merge($params, $optParams);
+      $data = $this->__call('get', array($params));
+      if ($this->useObjects()) {
+        return new Google_Subscription($data);
+      } else {
+        return $data;
+      }
+    }
+    /**
+     * Creates/Transfers a subscription for the customer. (subscriptions.insert)
+     *
+     * @param string $customerId Id of the Customer
+     * @param Google_Subscription $postBody
+     * @param array $optParams Optional parameters.
+     *
+     * @opt_param string customerAuthToken An auth token needed for transferring a subscription. Can be generated at https://www.google.com/a/cpanel/customer-domain/TransferToken. Optional.
+     * @return Google_Subscription
+     */
+    public function insert($customerId, Google_Subscription $postBody, $optParams = array()) {
+      $params = array('customerId' => $customerId, 'postBody' => $postBody);
+      $params = array_merge($params, $optParams);
+      $data = $this->__call('insert', array($params));
+      if ($this->useObjects()) {
+        return new Google_Subscription($data);
+      } else {
+        return $data;
+      }
+    }
+    /**
+     * Lists subscriptions of a reseller, optionally filtered by a customer name prefix.
+     * (subscriptions.list)
+     *
+     * @param array $optParams Optional parameters.
+     *
+     * @opt_param string customerAuthToken An auth token needed if the customer is not a resold customer of this reseller. Can be generated at https://www.google.com/a/cpanel/customer-domain/TransferToken.Optional.
+     * @opt_param string customerId Id of the Customer
+     * @opt_param string customerNamePrefix Prefix of the customer's domain name by which the subscriptions should be filtered. Optional
      * @opt_param string maxResults Maximum number of results to return
      * @opt_param string pageToken Token to specify next page in the list
      * @return Google_Subscriptions

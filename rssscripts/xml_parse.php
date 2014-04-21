@@ -1,21 +1,9 @@
 <?PHP
 
-	class xml_ingest{
+	class xml_ingest extends standard_ingest{
 	
 		var $link;
 		var $database;
-	
-		function xml_ingest(){
-		
-			include "../config.php";
-			include "../../public_html/site/database/database_layer.inc";
-			include "../../public_html/site/database/" . DB_TYPE . "_database_layer.inc";
-			$db_class = DB_TYPE . "_database_layer";
-			$this->database = new $db_class();
-			
-			$this->link = $this->database->database_connect();
-		
-		}
 
 		var $nodes_insert = array();
 		var $link_insert = array();
@@ -217,36 +205,6 @@
 		
 		}
 		
-		function node_insert(){
-		
-			foreach($this->current_url as $node => $list){
-			
-				foreach($list as $item){
-				
-					$item = trim($item);
-					
-					$statement = $this->database->select_query("SELECT node_id FROM node_data WHERE node_value=:value", array(":value" => utf8_encode($item)), $this->link);
-					$data = $this->database->get_all_rows($statement);					
-				
-					if(count($data)==0){
-						
-						$this->database->insert_query("insert into node_data(node_value)VALUES(:item)", array(":item" => utf8_encode($item)), $this->link);
-						$node_id = $this->database->last_insert_id($this->link);
-						
-					}else{
-											
-						$node_id = $data[0]['node_id'];
-						
-					}
-				
-					$this->term_insert($node,$node_id);
-				
-				}
-			
-			}
-		
-		}
-		
 		function term_insert($node, $node_id){
 			
 			if(!in_array($node, $this->ignore_nodes)&&strpos($node,"XMLNS")===FALSE){
@@ -442,7 +400,15 @@
 								
 							}else{
 							
-								$subject = "";
+								if(isset($this->current_url['DC:SUBJECT'])){
+							
+									$subject = mb_convert_encoding(implode(",", $this->current_url['DC:SUBJECT']),"UTF-8");
+									
+								}else{
+							
+									$subject = "";
+									
+								}
 							
 							}
 							
@@ -574,8 +540,9 @@
 
 			}else{
 			
-				echo "$url_address INVALID XML\n";
-
+				echo "INVALID XML\n";
+				mysql_query("update oer_site_list set feed_status = 'XML fail' where site_address = '" . $url_address . "'");
+			
 			}
 			
 			$this->database->insert_query("update oer_site_list set items_harvested = :items_harvested 

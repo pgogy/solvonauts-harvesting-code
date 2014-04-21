@@ -1,22 +1,10 @@
 <?PHP
 
-	class flickr_ingest{
+	class flickr_ingest extends standard_ingest{
 	
 		var $link;
 		var $database;
 	
-		function flickr_ingest(){
-		
-			include "../config.php";
-			include "../../public_html/site/database/database_layer.inc";
-			include "../../public_html/site/database/" . DB_TYPE . "_database_layer.inc";
-			$db_class = DB_TYPE . "_database_layer";
-			$this->database = new $db_class();
-			
-			$this->link = $this->database->database_connect();
-		
-		}
-
 		var $nodes_insert = array();
 		var $link_insert = array();
 		var $current_url = array();
@@ -29,53 +17,6 @@
 		var $address = "";		
 		var $site_licence = "";	
 		var $counter = 0;
-		
-		function add_entry($term, $value){
-			
-			if(!in_array($value, $this->current_data)){
-				
-				if(!isset($this->current_url[$term])){
-				
-					$this->current_url[$term] = array();
-				
-				}
-				
-				array_push($this->current_data, $value);			
-				array_push($this->current_url[$term], $value);
-			
-			}
-		
-		}
-		
-		function node_insert(){
-		
-			foreach($this->current_url as $node => $list){
-			
-				foreach($list as $item){
-				
-					$item = trim($item);
-					
-					$statement = $this->database->select_query("SELECT node_id FROM node_data WHERE node_value=:value", array(":value" => utf8_encode($item)), $this->link);
-					$data = $this->database->get_all_rows($statement);					
-				
-					if(count($data)==0){
-						
-						$this->database->insert_query("insert into node_data(node_value)VALUES(:item)", array(":item" => utf8_encode($item)), $this->link);
-						$node_id = $this->database->last_insert_id($this->link);
-						
-					}else{
-											
-						$node_id = $data[0]['node_id'];
-						
-					}
-				
-					$this->term_insert($node,$node_id);
-				
-				}
-			
-			}
-		
-		}
 		
 		function term_insert($node, $node_id){
 			
@@ -216,6 +157,10 @@
 				
 				$this->terms_used = array();
 
+			}else{
+			
+				echo "NO LINKS " . $this->address . "\n";
+			
 			}
 
 			$this->link_insert = array();
@@ -248,14 +193,10 @@
 				
 			}
 			
-			if(isset($picture['photo']['tags']) && isset($picture['photo']['tags']['tag'])){
-
-				foreach($picture['photo']['tags']['tag'] as $tag){
+			foreach($picture['photo']['tags']['tag'] as $tag){
 				
-					$this->add_entry("SUBJECT", $tag['_content']);
+				$this->add_entry("SUBJECT", $tag['_content']);
 			
-				}
-
 			}
 			
 			foreach($picture['photo']['urls']['url'] as $link){
@@ -275,7 +216,7 @@
 			$params = array(
 			
 				'username'	=>  $name,		
-				'api_key'	=> //ADD API KEY HERE,
+				'api_key'	=> '6cd9b4e9ad63c63371bd80158567ee88',
 				'method'	=> 'flickr.people.findbyusername',
 				'format'	=> 'php_serial'
 				
@@ -306,7 +247,7 @@
 			$params = array(
 			
 				'user_id'	=>  $user,		
-				'api_key'	=> //ADD API KEY HERE,
+				'api_key'	=> '6cd9b4e9ad63c63371bd80158567ee88',
 				'method'	=> 'flickr.photos.search',
 				'format'	=> 'php_serial',
 				'per_page'	=> 500
@@ -339,7 +280,7 @@
 				$params = array(
 				
 					'user_id'	=>  $user,		
-					'api_key'	=> //ADD API KEY HERE,
+					'api_key'	=> '6cd9b4e9ad63c63371bd80158567ee88',
 					'method'	=> 'flickr.photos.search',
 					'format'	=> 'php_serial',
 					'per_page'	=> 500,
@@ -369,7 +310,7 @@
 				
 					$params = array(
 						
-						'api_key'	=> //ADD API KEY HERE,
+						'api_key'	=> '6cd9b4e9ad63c63371bd80158567ee88',
 						'method'	=> 'flickr.photos.getInfo',
 						'format'	=> 'php_serial',
 						'photo_id'	=> $photo['id']
@@ -390,15 +331,11 @@
 
 					$url = "http://api.flickr.com/services/rest/?".implode('&', $encoded_params);
 
-					$rsp = @file_get_contents($url);
-
-					if(isset($rsp)&&$rsp!=""){
+					$rsp = file_get_contents($url);
 					
-						$rsp_obj = unserialize($rsp);
+					$rsp_obj = unserialize($rsp);
 					
-						$this->picture_process($rsp_obj);
-
-					}
+					$this->picture_process($rsp_obj);
 				
 				}
 				
