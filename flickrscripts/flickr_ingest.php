@@ -541,6 +541,7 @@
 
 				'username'	=>  $name,		
 
+				'api_key'	=> 'API KEY',
 
 				'method'	=> 'flickr.people.findbyusername',
 
@@ -572,6 +573,7 @@
 
 					'user_id'	=>  $user,		
 
+					'api_key'	=> 'API KEY',
 
 					'method'	=> 'flickr.photos.search',
 
@@ -607,6 +609,7 @@
 
 							'user_id'	=>  $user,		
 
+							'api_key'	=> 'API KEY',
 
 							'method'	=> 'flickr.photos.search',
 
@@ -636,6 +639,7 @@
 
 							$params = array(
 
+								'api_key'	=> 'API KEY',
 
 								'method'	=> 'flickr.photos.getInfo',
 
